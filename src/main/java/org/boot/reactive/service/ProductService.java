@@ -22,13 +22,18 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Mono<ProductResponseDto> findById(int id) {
+
         return productRepository.findById(id).map(this::entityToDto);
     }
 
+    @Transactional
+    public Mono<ProductResponseDto> update(Product product) {
+        productRepository.findById(product.getProductId());
+        product.setProductName("Mac");
+        return productRepository.save(product).map(this::entityToDto);
+    }
 
     private ProductResponseDto entityToDto(Product product) {
-        return ProductResponseDto.builder().productId(product.getProductId()).price(product.getPrice())
-                .productName(product.getProductName()).productDescription(product.getProductDescription())
-                .category(product.getCategory()).build();
+        return ProductResponseDto.builder().productId(product.getProductId()).price(product.getPrice()).productName(product.getProductName()).productDescription(product.getProductDescription()).category(product.getCategory()).build();
     }
 }
